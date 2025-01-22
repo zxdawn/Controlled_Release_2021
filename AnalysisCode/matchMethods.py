@@ -17,7 +17,7 @@ def performMatching(operatorDF, meterDF_All, sonicDF_All):
     # (4) 
 
 
-    cwd = os.getcwd()  
+    cwd = '../'
     
     print("Matching bridger passes to release events...")
     
@@ -501,8 +501,8 @@ def calcPlumeLength(t1, t2, sonicDF):
         sonicDF = sonicDF[t1.astimezone(pytz.utc):t2.astimezone(
             pytz.utc)]  # subset to only data in the timeframe we're interested in
         # import pdb; pdb.set_trace()
-        sonicDF_temp = sonicDF.drop('OperatorSet', 1)
-        integrated = sonicDF_temp.apply(integrate.trapz)  # integrate all fields
+        sonicDF_temp = sonicDF.drop('OperatorSet', axis=1)
+        integrated = sonicDF_temp.apply(lambda x: np.trapz(x), axis=0)  # Column-wise integration
         plumeLength = integrated['Speed_MPS'] #* mph_to_ms  # convert integrated windspeed (mph*s) to m
     return plumeLength
 

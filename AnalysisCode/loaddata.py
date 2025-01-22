@@ -13,7 +13,7 @@ from dateutil.parser import parse
 def loaddata():
     """Load all data from testing"""
     
-    cwd = os.getcwd()
+    cwd = '../'
 
     # load Bridger data 
     DataPath = os.path.join(cwd, 'BridgerTestData')    
@@ -433,7 +433,7 @@ def loadGHGSatData(filepath, timestamp_path):
     df = pd.read_csv(filepath, parse_dates=[['DateOfSurvey', 'Timestamp (hyperspectral technologies only)']])
 
     df.rename(columns={'DateOfSurvey_Timestamp (hyperspectral technologies only)': 'Operator_Timestamp'}, inplace=True)
-    cwd = os.getcwd()
+    cwd = '../'
     QC_filter = pd.read_csv(os.path.join(cwd, 'GHGSatTestData', 'QC_filter.csv'), header=None, names=['QC filter'])
 
     # GHGSat does not report a timestamp for all passes. Non-retrievals are identified
@@ -494,7 +494,7 @@ def loadGHGSatData(filepath, timestamp_path):
 
     # First identify all errors as missing data points
     df_2['QC filter'][df_2['PerformerExperimentID'].isnull()] = 0.5
-    df = df_1.append(df_2[df_2['PerformerExperimentID'].isnull()]).sort_values(by=['Stanford_timestamp'])
+    df = df_1._append(df_2[df_2['PerformerExperimentID'].isnull()]).sort_values(by=['Stanford_timestamp'])
 
     # Some were flagged by GHGSat
     df['QC filter'][df['Stanford_timestamp'] == pd.to_datetime('2021-10-18 17:38:00').tz_localize(
@@ -2052,7 +2052,7 @@ def processAnemometer(path_lookup, localtz, cols, offset):
           file_data = pd.read_csv(os.path.join(path_lookup, file),skiprows=4,
                         usecols=cols,names=['Direction','Speed_MPS','time'], index_col='time', parse_dates=True)
           file_data = file_data.dropna()
-          data = data.append(file_data)
+          data = data._append(file_data)
     
     data = data.reset_index()
 
@@ -2062,7 +2062,7 @@ def processAnemometer(path_lookup, localtz, cols, offset):
     # Set timezone
     df['time'] = pd.to_datetime(df['time'])
     df['time'] = df['time'].dt.tz_localize(localtz)
-    df = df.sort_values("time").reset_index(drop=True)    
+    df = df.sort_values("time").reset_index(drop=False)
     df['time'] = df['time'].apply(lambda x: x.astimezone(pytz.utc))
 
     # Apply time offset    
